@@ -3,17 +3,27 @@ Django settings for the portfolio_site project.
 A small, self-contained portfolio backend using SQLite.
 """
 
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: change this before deploying anywhere public.
-SECRET_KEY = "dev-only-secret-key-change-before-deploying"
 
-# SECURITY WARNING: keep DEBUG off in production.
-DEBUG = True
+# SECURITY
+# Use an environment variable in production.
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "dev-only-secret-key-change-before-deploying"
+)
+
+# False by default for production.
+# Your local project will still work with DEBUG=False.
+DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["*"]
+
+
+# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -26,8 +36,10 @@ INSTALLED_APPS = [
     "core",
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -36,7 +48,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 ROOT_URLCONF = "portfolio_site.urls"
+
 
 TEMPLATES = [
     {
@@ -54,7 +68,12 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "portfolio_site.wsgi.application"
+
+
+# Database
+# SQLite is sufficient for this portfolio project.
 
 DATABASES = {
     "default": {
@@ -63,27 +82,61 @@ DATABASES = {
     }
 }
 
+
+# Password validation
+
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"
+    },
 ]
 
+
+# Internationalization
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Kolkata"
+
 USE_I18N = True
+
 USE_TZ = True
 
+
+# Static files
+
 STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "core" / "static"]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "core" / "static"
+]
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
+# Default primary key field type
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Django REST Framework
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
-    "DEFAULT_HTTP_METHOD_NAMES": ["get", "head", "options"],
+    "DEFAULT_HTTP_METHOD_NAMES": [
+        "get",
+        "head",
+        "options",
+    ],
 }
