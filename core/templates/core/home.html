@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ profile.full_name }} — {{ profile.tagline }}</title>
+<meta name="description" content="{{ profile.summary|truncatechars:150 }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- Top Navbar -->
+<header>
+  <div class="nav-container">
+    <a href="#top" class="nav-brand">
+      {{ profile.full_name }}
+    </a>
+    
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#certifications">Certifications</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="{% static 'core/files/'|add:profile.resume_file_name %}" download class="nav-resume">
+        Résumé
+      </a>
+    </div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle Navigation">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <ul class="mobile-menu" id="mobileMenu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="{% static 'core/files/'|add:profile.resume_file_name %}" download>Résumé</a></li>
+  </ul>
+</header>
+
+<main id="main">
+
+  <!-- Hero Section with Profile Picture -->
+  <section class="hero" id="top">
+    <div style="display: flex; flex-wrap: wrap; gap: 3rem; align-items: center; justify-content: space-between; width: 100%;">
+      
+      <!-- Left text container -->
+      <div style="flex: 1; min-width: 280px;">
+        <div class="hero-eyebrow">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+          Portfolio — {{ profile.location }}
+        </div>
+        <h1 class="hero-name">
+          Hi, I'm <span>{{ profile.full_name }}</span>
+        </h1>
+        <p class="hero-tagline">{{ profile.tagline }}</p>
+        <p class="hero-summary">{{ profile.summary }}</p>
+        
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#projects">View projects</a>
+          <a class="btn btn-ghost" href="#contact">Get in touch</a>
+        </div>
+
+        <ul class="hero-links">
+          {% if profile.github_url %}<li><a href="{{ profile.github_url }}" target="_blank" rel="noopener">GitHub ↗</a></li>{% endif %}
+          {% if profile.linkedin_url %}<li><a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener">LinkedIn ↗</a></li>{% endif %}
+          <li><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></li>
+          {% if profile.phone %}<li>{{ profile.phone }}</li>{% endif %}
+        </ul>
+      </div>
+
+      <!-- Right profile image container -->
+      <div style="flex-shrink: 0; margin: auto;">
+        <img src="{% static 'core/images/profile.png' %}" alt="{{ profile.full_name }}" style="width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 3px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section" id="about">
+    <h2 class="section-title">
+      <span class="number">01.</span> About Me
+    </h2>
+    <p class="about-text">{{ profile.summary }}</p>
+
+    {% if experiences %}
+    <div style="margin-top: 2.5rem;">
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent);">Experience & Training</h3>
+      <div class="timeline">
+        {% for exp in experiences %}
+        <div class="timeline-row">
+          <div class="timeline-when">{{ exp.start_date }} – {{ exp.end_date }}</div>
+          <div class="timeline-what">
+            <h3>{{ exp.role }} <span class="timeline-org">— {{ exp.organization }}</span></h3>
+            {% if exp.location %}<p class="timeline-location">{{ exp.location }}</p>{% endif %}
+            <ul>
+              {% for bullet in exp.bullets %}<li>{{ bullet }}</li>{% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if educations %}
+    <div style="margin-top: 2.5rem;">
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent);">Education</h3>
+      <div class="timeline">
+        {% for edu in educations %}
+        <div class="timeline-row">
+          <div class="timeline-when">{% if edu.start_year %}{{ edu.start_year }}–{% endif %}{{ edu.end_year }}</div>
+          <div class="timeline-what">
+            <h3>{{ edu.degree }}</h3>
+            <p class="timeline-org">{{ edu.institution }}{% if edu.location %}, {{ edu.location }}{% endif %}</p>
+            {% if edu.detail %}<p class="timeline-location" style="font-family: var(--font-mono); font-size: 0.8rem; background: rgba(0,0,0,0.2); padding: 0.4rem 0.6rem; border-radius: 6px; width: fit-content;">{{ edu.detail }}</p>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if profile.languages_spoken %}
+    <p class="languages"><span>Languages Known —</span> {{ profile.languages_spoken }}</p>
+    {% endif %}
+  </section>
+
+  <!-- Skills Section -->
+  <section class="section" id="skills">
+    <h2 class="section-title">
+      <span class="number">02.</span> Technical Skills
+    </h2>
+    <p class="about-text" style="margin-bottom: 2rem;">Tools, languages, and frameworks I use to build robust applications.</p>
+    
+    <div class="skills-grid">
+      {% for category in skill_categories %}
+      <div class="skill-group">
+        <h3>{{ category.name }}</h3>
+        <ul class="chip-list">
+          {% for skill in category.skills.all %}
+          <li class="chip">{{ skill.name }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="section" id="projects">
+    <h2 class="section-title">
+      <span class="number">03.</span> Featured Projects
+    </h2>
+    <p class="about-text" style="margin-bottom: 2rem;">Some of the key systems and applications I've developed.</p>
+
+    <div class="project-list">
+      {% for project in projects %}
+      <article class="project-card">
+        <div>
+          <div class="project-head">
+            <h3>{{ project.title }}</h3>
+            {% if project.year %}<span class="project-year">{{ project.year }}</span>{% endif %}
+          </div>
+          <p class="project-summary">{{ project.summary }}</p>
+          {% if project.bullets %}
+          <ul>
+            {% for bullet in project.bullets %}<li>{{ bullet }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <div>
+          <ul class="chip-list mono" style="margin-bottom: 1rem;">
+            {% for tech in project.tech_list %}
+            <li class="chip chip-outline">{{ tech }}</li>
+            {% endfor %}
+          </ul>
+          {% if project.link %}
+          <a class="project-link" href="{{ project.link }}" target="_blank" rel="noopener">
+            View repository ↗
+          </a>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Certifications Section -->
+  <section class="section" id="certifications">
+    <h2 class="section-title">
+      <span class="number">04.</span> Certifications
+    </h2>
+    <p class="about-text" style="margin-bottom: 2rem;">Professional certifications and continuous learning.</p>
+
+    <ul class="cert-list">
+      {% for cert in certifications %}
+      <li>
+        <span class="cert-name">{{ cert.name }}</span>
+        <span class="cert-meta">{{ cert.provider }}{% if cert.year %} · {{ cert.year }}{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <!-- Contact Section (No Form, Direct Links) -->
+  <section class="section" id="contact">
+    <h2 class="section-title">
+      <span class="number">05.</span> Get In Touch
+    </h2>
+    <p class="about-text" style="margin-bottom: 2rem;">
+      Have a software engineering role in mind, want to collaborate on a project, or just want to connect? My inbox is always open.
+    </p>
+
+    <div class="contact-grid">
+      <div class="contact-direct">
+        <div class="contact-item">
+          <div class="contact-icon">@</div>
+          <div>
+            <span>Email Me</span>
+            <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+          </div>
+        </div>
+
+        {% if profile.phone %}
+        <div class="contact-item">
+          <div class="contact-icon">#</div>
+          <div>
+            <span>Call / WhatsApp</span>
+            <p>{{ profile.phone }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="contact-socials">
+        {% if profile.linkedin_url %}
+        <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener">
+          LinkedIn ↗
+        </a>
+        {% endif %}
+        {% if profile.github_url %}
+        <a href="{{ profile.github_url }}" target="_blank" rel="noopener">
+          GitHub ↗
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Built with Django, SQLite, and vanilla HTML/CSS. Content fully editable from the Django admin panel.</p>
+</footer>
+
+<script src="{% static 'core/js/script.js' %}"></script>
+</body>
+</html>

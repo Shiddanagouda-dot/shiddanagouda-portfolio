@@ -1,0 +1,2 @@
+Add your resume as "resume.pdf" in this folder (core/static/core/files/resume.pdf)
+so the "Résumé" link in the top nav works. You can delete this text file afterwards.
